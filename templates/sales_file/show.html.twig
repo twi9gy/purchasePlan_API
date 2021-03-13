@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SalesFile{% endblock %}
+
+{% block body %}
+    <h1>SalesFile</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ sales_file.id }}</td>
+            </tr>
+            <tr>
+                <th>Filename</th>
+                <td>{{ sales_file.filename }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ sales_file.createdAt ? sales_file.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>EditAt</th>
+                <td>{{ sales_file.editAt ? sales_file.editAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('sales_file_index') }}">back to list</a>
+
+    <a href="{{ path('sales_file_edit', {'id': sales_file.id}) }}">edit</a>
+
+    {{ include('sales_file/_delete_form.html.twig') }}
+{% endblock %}

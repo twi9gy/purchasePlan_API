@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit SalesFile{% endblock %}
+
+{% block body %}
+    <h1>Edit SalesFile</h1>
+
+    {{ include('sales_file/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('sales_file_index') }}">back to list</a>
+
+    {{ include('sales_file/_delete_form.html.twig') }}
+{% endblock %}

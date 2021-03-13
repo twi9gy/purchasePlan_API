@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New SalesFile{% endblock %}
+
+{% block body %}
+    <h1>Create new SalesFile</h1>
+
+    {{ include('sales_file/_form.html.twig') }}
+
+    <a href="{{ path('sales_file_index') }}">back to list</a>
+{% endblock %}
