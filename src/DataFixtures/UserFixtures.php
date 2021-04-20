@@ -12,10 +12,10 @@ class UserFixtures extends Fixture
 {
      private $passwordEncoder;
 
-     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-     {
-         $this->passwordEncoder = $passwordEncoder;
-     }
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -27,14 +27,16 @@ class UserFixtures extends Fixture
         $user = new User();
         $user->setEmail('test@gmail.com');
         $user->setPassword($this->passwordEncoder->encodePassword(
-            $user,'test'));
+            $user,
+            'test'
+        ));
         $user->setRoles(["ROLE_USER"]);
         $user->setCompanyName('user_company');
         $manager->persist($user);
 
         foreach ($categories as $categoryName) {
             $category = new Category();
-            $category->setUserId($user);
+            $category->setPurchaseUser($user);
             $category->setName($categoryName);
             $manager->persist($category);
         }
@@ -43,7 +45,9 @@ class UserFixtures extends Fixture
         $user = new User();
         $user->setEmail('admin@gmail.com');
         $user->setPassword($this->passwordEncoder->encodePassword(
-            $user,'super_admin'));
+            $user,
+            'super_admin'
+        ));
         $user->setRoles(["ROLE_SUPER_ADMIN", "ROLE_USER"]);
         $user->setCompanyName('admin_company');
         $manager->persist($user);

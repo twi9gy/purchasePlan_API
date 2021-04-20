@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use App\Model\Request\SalesFileDtoRequest;
+use App\Model\SalesFileDto;
 use App\Repository\CategoryRepository;
 use App\Repository\SalesFileRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,6 +43,22 @@ class SalesFile
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=DemandForecastFile::class, mappedBy="salesFiles")
+     */
+    private $demandForecastFiles;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="salesFiles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $purchase_user;
+
+    public function __construct()
+    {
+        $this->demandForecastFiles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -95,7 +113,7 @@ class SalesFile
         return $this;
     }
 
-    public static function fromDto(SalesFileDtoRequest $salesFileDto, CategoryRepository $categoryRepository): self
+    public static function fromDto(SalesFileDto $salesFileDto, CategoryRepository $categoryRepository): self
     {
         // Поиск категории по id
         $category = $categoryRepository->find($salesFileDto->category_id);
@@ -104,5 +122,44 @@ class SalesFile
         $salesFile->setCategory($category);
         $salesFile->setFilename($salesFileDto->filename);
         return $salesFile;
+    }
+
+    /**
+     * @return Collection|DemandForecastFile[]
+     */
+    public function getDemandForecastFiles(): Collection
+    {
+        return $this->demandForecastFiles;
+    }
+
+    public function addDemandForecastFile(DemandForecastFile $demandForecastFile): self
+    {
+        if (!$this->demandForecastFiles->contains($demandForecastFile)) {
+            $this->demandForecastFiles[] = $demandForecastFile;
+            $demandForecastFile->addSalesFile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandForecastFile(DemandForecastFile $demandForecastFile): self
+    {
+        if ($this->demandForecastFiles->removeElement($demandForecastFile)) {
+            $demandForecastFile->removeSalesFile($this);
+        }
+
+        return $this;
+    }
+
+    public function getPurchaseUser(): ?User
+    {
+        return $this->purchase_user;
+    }
+
+    public function setPurchaseUser(?User $user_id): self
+    {
+        $this->purchase_user = $user_id;
+
+        return $this;
     }
 }

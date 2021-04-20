@@ -28,7 +28,7 @@ class CategoryRepository extends ServiceEntityRepository
     public function findByUserId($value): array
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.user_id = :val')
+            ->andWhere('c.purchase_user = :val')
             ->setParameter('val', $value)
             ->orderBy('c.id', 'ASC')
             //->setMaxResults(10)

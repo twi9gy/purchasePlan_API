@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Model\Request\CategoryDtoRequest;
+use App\Model\CategoryDto;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -29,7 +29,7 @@ class Category
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="categories")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user_id;
+    private $purchase_user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class)
@@ -42,9 +42,15 @@ class Category
      */
     private $salesFiles;
 
+    /**
+     * @ORM\OneToMany(targetEntity=DemandForecastFile::class, mappedBy="category")
+     */
+    private $demandForecastFiles;
+
     public function __construct()
     {
         $this->salesFiles = new ArrayCollection();
+        $this->demandForecastFiles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -64,14 +70,14 @@ class Category
         return $this;
     }
 
-    public function getUserId(): ?User
+    public function getPurchaseUser(): ?User
     {
-        return $this->user_id;
+        return $this->purchase_user;
     }
 
-    public function setUserId(?User $user_id): self
+    public function setPurchaseUser(?User $user_id): self
     {
-        $this->user_id = $user_id;
+        $this->purchase_user = $user_id;
 
         return $this;
     }
@@ -88,7 +94,7 @@ class Category
         return $this;
     }
 
-    public static function fromDto(CategoryDtoRequest $categoryDto): self
+    public static function fromDto(CategoryDto $categoryDto): self
     {
         $category = new self();
         $category->setParent($categoryDto->parent_id);
@@ -119,6 +125,35 @@ class Category
         // set the owning side to null (unless already changed)
         if ($this->salesFiles->removeElement($salesFile) && $salesFile->getCategory() === $this) {
             $salesFile->setCategory(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DemandForecastFile[]
+     */
+    public function getDemandForecastFiles(): Collection
+    {
+        return $this->demandForecastFiles;
+    }
+
+    public function addDemandForecastFile(DemandForecastFile $demandForecastFile): self
+    {
+        if (!$this->demandForecastFiles->contains($demandForecastFile)) {
+            $this->demandForecastFiles[] = $demandForecastFile;
+            $demandForecastFile->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandForecastFile(DemandForecastFile $demandForecastFile): self
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->demandForecastFiles->removeElement($demandForecastFile)
+            && $demandForecastFile->getCategory() === $this) {
+            $demandForecastFile->setCategory(null);
         }
 
         return $this;

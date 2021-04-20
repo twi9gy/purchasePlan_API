@@ -12,6 +12,14 @@ nelmio_api_doc:
                     bearerFormat: JWT
         security:
             - Bearer: [ ]
+    models:
+        names:
+            - { alias: UserDto, type: App\Model\UserDto }
+            - { alias: FailResponse, type: App\Model\FailResponse }
+            - { alias: CategoryDto, type: App\Model\CategoryDto }
+            - { alias: SalesFileDto, type: App\Model\SalesFileDto }
+            - { alias: DemandForecastDto, type: App\Model\DemandForecastFileDto }
+            - { alias: PurcahsePlanDto, type: App\Model\PurchasePlanDto }
     areas: # to filter documented areas
         path_patterns:
             - ^/api/v1(?!/doc$) # Accepts routes under /api except /api/doc

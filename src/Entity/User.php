@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use App\Model\Request\UserDtoRequest;
+use App\Model\UserDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
-use OpenApi\Annotations\OpenApi as OA;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -45,13 +44,31 @@ class User implements UserInterface
     private $companyName;
 
     /**
-     * @ORM\OneToMany(targetEntity=Category::class, mappedBy="user_id")
+     * @ORM\OneToMany(targetEntity=Category::class, mappedBy="purchase_user")
      */
     private $categories;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DemandForecastFile::class, mappedBy="purchase_user", orphanRemoval=true)
+     */
+    private $demandForecastFiles;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PurchasePlan::class, mappedBy="purchase_user", orphanRemoval=true)
+     */
+    private $purchasePlans;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SalesFile::class, mappedBy="purchase_user", orphanRemoval=true)
+     */
+    private $salesFiles;
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->demandForecastFiles = new ArrayCollection();
+        $this->purchasePlans = new ArrayCollection();
+        $this->salesFiles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,7 +125,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
     public function setPassword(string $password): self
@@ -151,13 +168,13 @@ class User implements UserInterface
         return $this;
     }
 
-    public static function fromDto(UserDtoRequest $userDto): self
+    public static function fromDto(UserDto $userDto): self
     {
         $user = new self();
         $user->setEmail($userDto->email);
         $user->setRoles(["ROLE_USER"]);
         $user->setPassword($userDto->password);
-        $user->setCompanyName($userDto->companyName || '');
+        $user->setCompanyName($userDto->company_name);
         return $user;
     }
 
@@ -173,7 +190,7 @@ class User implements UserInterface
     {
         if (!$this->categories->contains($category)) {
             $this->categories[] = $category;
-            $category->setUserId($this);
+            $category->setPurchaseUser($this);
         }
 
         return $this;
@@ -182,8 +199,8 @@ class User implements UserInterface
     public function removeCategory(Category $category): self
     {
         // set the owning side to null (unless already changed)
-        if ($this->categories->removeElement($category) && $category->getUserId() === $this) {
-            $category->setUserId(null);
+        if ($this->categories->removeElement($category) && $category->getPurchaseUser() === $this) {
+            $category->setPurchaseUser(null);
         }
 
         return $this;
@@ -192,5 +209,90 @@ class User implements UserInterface
     public function __toString(): string
     {
         return $this->getUsername();
+    }
+
+    /**
+     * @return Collection|DemandForecastFile[]
+     */
+    public function getDemandForecastFiles(): Collection
+    {
+        return $this->demandForecastFiles;
+    }
+
+    public function addDemandForecastFile(DemandForecastFile $demandForecastFile): self
+    {
+        if (!$this->demandForecastFiles->contains($demandForecastFile)) {
+            $this->demandForecastFiles[] = $demandForecastFile;
+            $demandForecastFile->setPurchaseUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemandForecastFile(DemandForecastFile $demandForecastFile): self
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->demandForecastFiles->removeElement($demandForecastFile)
+            && $demandForecastFile->getPurchaseUser() === $this) {
+            $demandForecastFile->setPurchaseUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PurchasePlan[]
+     */
+    public function getPurchasePlans(): Collection
+    {
+        return $this->purchasePlans;
+    }
+
+    public function addPurchasePlan(PurchasePlan $purchasePlan): self
+    {
+        if (!$this->purchasePlans->contains($purchasePlan)) {
+            $this->purchasePlans[] = $purchasePlan;
+            $purchasePlan->setPurchaseUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePurchasePlan(PurchasePlan $purchasePlan): self
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->purchasePlans->removeElement($purchasePlan) && $purchasePlan->setPurchaseUser() === $this) {
+            $purchasePlan->setPurchaseUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SalesFile[]
+     */
+    public function getSalesFiles(): Collection
+    {
+        return $this->salesFiles;
+    }
+
+    public function addSalesFile(SalesFile $salesFile): self
+    {
+        if (!$this->salesFiles->contains($salesFile)) {
+            $this->salesFiles[] = $salesFile;
+            $salesFile->setPurchaseUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalesFile(SalesFile $salesFile): self
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->salesFiles->removeElement($salesFile) && $salesFile->setPurchaseUser() === $this) {
+            $salesFile->setPurchaseUser(null);
+        }
+
+        return $this;
     }
 }
