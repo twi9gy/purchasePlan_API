@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Вход/PurchasePlan{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-6">
+
+                <div class="card p-3">
+                    <form method="post">
+
+                        {% if error %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if app.user %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        Вы авторизовались как {{ app.user.username }}, <a href="{{ path('app_logout') }}">Выход</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-12">
+                                <h1 class="h3 mb-3 font-weight-normal text-center">Вход</h1>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <label for="inputEmail">Email</label>
+                                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <label for="inputPassword">Пароль</label>
+                                <input type="password" name="password" id="inputPassword" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token"
+                               value="{{ csrf_token('authenticate') }}"
+                        >
+
+                        <div class="row justify-content-center mt-3">
+                            <div class="col-6">
+                                <button class="btn btn-lg btn-outline-primary w-100" type="submit">
+                                    Вход
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

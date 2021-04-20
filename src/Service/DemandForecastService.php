@@ -56,7 +56,7 @@ class DemandForecastService
         // Выбрасываем ошибку. Сервис недоступен
         if ($responseData === false) {
             throw new DemandForecastServiceException('Сервис временно недоступен. 
-            Попробуйте создать отчет о прогнозировании спроса позже позднее');
+            Попробуйте создать отчет о прогнозировании спроса позже.');
         }
 
         curl_close($ch);

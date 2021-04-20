@@ -17,10 +17,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractDashboardController
 {
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/admin", name="admin_app")
      */
     public function index(): Response
     {
+        $this->denyAccessUnlessGranted(
+            'ROLE_SUPER_ADMIN',
+            $this->getUser(),
+            'У вас нет доступа к этой странице'
+        );
+
         $routeBuilder = $this->get(CrudUrlGenerator::class)->build();
         $url = $routeBuilder->setController(UserCrudController::class)->generateUrl();
         return $this->redirect($url);
