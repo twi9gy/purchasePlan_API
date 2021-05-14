@@ -33,27 +33,31 @@ class SalesFile
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
-    private $editAt;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="salesFiles")
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
 
     /**
-     * @ORM\ManyToMany(targetEntity=DemandForecastFile::class, mappedBy="salesFiles")
-     */
-    private $demandForecastFiles;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="salesFiles")
      * @ORM\JoinColumn(nullable=false)
      */
     private $purchase_user;
+
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    private $separator;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DemandForecastFile::class, mappedBy="salesFile", orphanRemoval=true)
+     */
+    private $demandForecastFiles;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $createdByCategory;
 
     public function __construct()
     {
@@ -89,18 +93,6 @@ class SalesFile
         return $this;
     }
 
-    public function getEditAt(): ?\DateTimeInterface
-    {
-        return $this->editAt;
-    }
-
-    public function setEditAt(\DateTimeInterface $editAt): self
-    {
-        $this->editAt = $editAt;
-
-        return $this;
-    }
-
     public function getCategory(): ?Category
     {
         return $this->category;
@@ -121,7 +113,37 @@ class SalesFile
         $salesFile = new self();
         $salesFile->setCategory($category);
         $salesFile->setFilename($salesFileDto->filename);
+        $salesFile->setSeparator($salesFileDto->separator);
         return $salesFile;
+    }
+
+    public function getPurchaseUser(): ?User
+    {
+        return $this->purchase_user;
+    }
+
+    public function setPurchaseUser(?User $user_id): self
+    {
+        $this->purchase_user = $user_id;
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFilename();
+    }
+
+    public function getSeparator(): ?string
+    {
+        return $this->separator;
+    }
+
+    public function setSeparator(?string $separator): self
+    {
+        $this->separator = $separator;
+
+        return $this;
     }
 
     /**
@@ -136,7 +158,7 @@ class SalesFile
     {
         if (!$this->demandForecastFiles->contains($demandForecastFile)) {
             $this->demandForecastFiles[] = $demandForecastFile;
-            $demandForecastFile->addSalesFile($this);
+            $demandForecastFile->setSalesFile($this);
         }
 
         return $this;
@@ -145,20 +167,23 @@ class SalesFile
     public function removeDemandForecastFile(DemandForecastFile $demandForecastFile): self
     {
         if ($this->demandForecastFiles->removeElement($demandForecastFile)) {
-            $demandForecastFile->removeSalesFile($this);
+            // set the owning side to null (unless already changed)
+            if ($demandForecastFile->getSalesFile() === $this) {
+                $demandForecastFile->setSalesFile(null);
+            }
         }
 
         return $this;
     }
 
-    public function getPurchaseUser(): ?User
+    public function getCreatedByCategory(): ?bool
     {
-        return $this->purchase_user;
+        return $this->createdByCategory;
     }
 
-    public function setPurchaseUser(?User $user_id): self
+    public function setCreatedByCategory(?bool $createdByCategory): self
     {
-        $this->purchase_user = $user_id;
+        $this->createdByCategory = $createdByCategory;
 
         return $this;
     }

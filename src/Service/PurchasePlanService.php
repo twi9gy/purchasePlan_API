@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\DemandForecastFile;
 use App\Exception\PlanningPurchaseServiceException;
 use App\Model\PurchasePlanDto;
 
@@ -19,18 +20,21 @@ class PurchasePlanService
     }
 
     /**
-     * @throws \App\Exception\PlanningPurchaseServiceException
+     * @param PurchasePlanDto $request
+     * @param DemandForecastFile $file
+     * @return array
+     * @throws PlanningPurchaseServiceException
      */
-    public function getPurchasePlan(PurchasePlanDto $request): string
+    public function getPurchasePlan(PurchasePlanDto $request, DemandForecastFile $file): array
     {
         // Формируем данные для анализа
         $cFile = curl_file_create($this->pathToFile . '/' . $request->forecast_file . '.json');
         $postData = array('file'=> $cFile);
 
         $uri = $this->baseUri . 'purchase_plan/create' .
-            '?service_level=' . $request->service_level . '&storage_costs=' . $request->storage_cost .
-            '&product_price=' . $request->product_price . '&shipping_costs=' . $request->shipping_costs .
-            '&time_shipping=' . $request->time_shipping;
+            '?freq_interval=' . $file->getInterval() . '&service_level=' . $request->service_level .
+            '&storage_costs=' . $request->storage_cost . '&product_price=' . $request->product_price .
+            '&shipping_costs=' . $request->shipping_costs . '&time_shipping=' . $request->time_shipping;
 
         if ($request->delayed_deliveries !== null) {
             $uri .= '&delayed_deliveries=' . $request->delayed_deliveries;
@@ -59,7 +63,7 @@ class PurchasePlanService
         if (!is_dir($this->pathToSave)
             && !mkdir($this->pathToSave, 0777, true)
             && !is_dir($this->pathToSave)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $this->pathToSave));
+            throw new \Exception(sprintf('Directory "%s" was not created', $this->pathToSave));
         }
 
         // Сохранение результата в ФС
@@ -68,6 +72,6 @@ class PurchasePlanService
             $responseData
         );
 
-        return $responseData;
+        return $result;
     }
 }

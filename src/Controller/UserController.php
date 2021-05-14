@@ -136,6 +136,22 @@ class UserController extends AbstractController
      *          )
      *     ),
      *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
+     *     ),
+     *     @OA\Response(
      *          response="409",
      *          description="Внутренняя ошибка",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")

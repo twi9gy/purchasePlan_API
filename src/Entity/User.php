@@ -206,11 +206,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function __toString(): string
-    {
-        return $this->getUsername();
-    }
-
     /**
      * @return Collection|DemandForecastFile[]
      */
@@ -294,5 +289,10 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getEmail();
     }
 }

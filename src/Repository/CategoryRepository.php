@@ -31,9 +31,20 @@ class CategoryRepository extends ServiceEntityRepository
             ->andWhere('c.purchase_user = :val')
             ->setParameter('val', $value)
             ->orderBy('c.id', 'ASC')
-            //->setMaxResults(10)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByUser($user): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.id, c.name')
+            ->andWhere('c.purchase_user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult()
+        ;
     }
 //    public function paginate($dql, $page = 1, $limit = 5): Paginator
 //    {

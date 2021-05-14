@@ -83,21 +83,12 @@ class CategoryController extends AbstractController
 
         if ($user) {
             // Получаем категории пользователя
-            $categories = $categoryRepository->findBy(['purchase_user' => $user->getId()]);
-
-            // Формируем массив категорий
-            $result = [];
-            foreach ($categories as $category) {
-                $result[] = [
-                    'id' => $category->getId(),
-                    'name' => $category->getName()
-                ];
-            }
+            $categories = $categoryRepository->findByUser($user->getId());
 
             // Устанавливаем ответ сервера
             $data = [
                 'code' => Response::HTTP_OK,
-                'categories' => $result
+                'categories' => $categories
             ];
             $response->setStatusCode(Response::HTTP_OK);
         } else {
@@ -264,6 +255,22 @@ class CategoryController extends AbstractController
      *          response="400",
      *          description="Внутренняя ошибка.",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
      *     )
      * )
      *
@@ -276,11 +283,15 @@ class CategoryController extends AbstractController
     {
         $entityManager = $this->getDoctrine()->getManager();
         $categoryRepository = $entityManager->getRepository(Category::class);
+        $userRepository = $entityManager->getRepository(User::class);
 
         $response = new Response();
 
         // Надо var_dump посмотреть $category
-        $categoryRes = $categoryRepository->findOneBy(['id' => $category->getId()]);
+        $categoryRes = $categoryRepository->findOneBy([
+            'id' => $category->getId(),
+            'purchase_user' => $userRepository->findOneBy(['email' => $this->getUser()->getUsername()])
+        ]);
 
         if ($categoryRes) {
             // Формируем ответ сервера
@@ -339,6 +350,22 @@ class CategoryController extends AbstractController
      *          response="400",
      *          description="Внутренняя ошибка.",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
      *     )
      * )
      *
@@ -415,6 +442,22 @@ class CategoryController extends AbstractController
      *          response="400",
      *          description="Внутренняя ошибка.",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
      *     )
      * )
      *

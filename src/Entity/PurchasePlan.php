@@ -55,12 +55,6 @@ class PurchasePlan
     private $purchase_user;
 
     /**
-     * @ORM\OneToOne(targetEntity=DemandForecastFile::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $demandForecastFile;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $serviceLevel;
@@ -89,6 +83,17 @@ class PurchasePlan
      * @ORM\Column(type="integer", nullable=true)
      */
     private $delayedDeliveries;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=DemandForecastFile::class, inversedBy="purchasePlans")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $demandForecastFile;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     public function getId(): ?int
     {
@@ -151,18 +156,6 @@ class PurchasePlan
     public function setPurchaseUser(?User $user_id): self
     {
         $this->purchase_user = $user_id;
-
-        return $this;
-    }
-
-    public function getDemandForecastFile(): ?DemandForecastFile
-    {
-        return $this->demandForecastFile;
-    }
-
-    public function setDemandForecastFile(DemandForecastFile $demandForecastFile): self
-    {
-        $this->demandForecastFile = $demandForecastFile;
 
         return $this;
     }
@@ -280,8 +273,32 @@ class PurchasePlan
         return $this;
     }
 
+    public function getDemandForecastFile(): ?DemandForecastFile
+    {
+        return $this->demandForecastFile;
+    }
+
+    public function setDemandForecastFile(?DemandForecastFile $demandForecastFile): self
+    {
+        $this->demandForecastFile = $demandForecastFile;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
     public function __toString(): string
     {
-         return $this->getFilename();
+        return $this->filename;
     }
 }

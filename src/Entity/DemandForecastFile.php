@@ -37,21 +37,6 @@ class DemandForecastFile
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    private $editAt;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $analysisMethod;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=SalesFile::class, inversedBy="demandForecastFiles")
-     */
-    private $salesFiles;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="demandForecastFiles")
      */
     private $category;
@@ -77,9 +62,40 @@ class DemandForecastFile
      */
     private $forecastPeriod;
 
+    private const METHODS_TYPES = [
+        1 => 'метод Хольта-Винтерса',
+        2 => 'модель SARIMA',
+    ];
+
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $analysisMethod;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PurchasePlan::class, mappedBy="demandForecastFile", orphanRemoval=true)
+     */
+    private $purchasePlans;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $rmse;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $interval;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=SalesFile::class, inversedBy="demandForecastFiles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $salesFile;
+
     public function __construct()
     {
-        $this->salesFiles = new ArrayCollection();
+        $this->purchasePlans = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,54 +123,6 @@ class DemandForecastFile
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getEditAt(): ?\DateTimeInterface
-    {
-        return $this->editAt;
-    }
-
-    public function setEditAt(\DateTimeInterface $editAt): self
-    {
-        $this->editAt = $editAt;
-
-        return $this;
-    }
-
-    public function getAnalysisMethod(): ?string
-    {
-        return $this->analysisMethod;
-    }
-
-    public function setAnalysisMethod(string $analysisMethod): self
-    {
-        $this->analysisMethod = $analysisMethod;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|SalesFile[]
-     */
-    public function getSalesFiles(): Collection
-    {
-        return $this->salesFiles;
-    }
-
-    public function addSalesFile(SalesFile $salesFile): self
-    {
-        if (!$this->salesFiles->contains($salesFile)) {
-            $this->salesFiles[] = $salesFile;
-        }
-
-        return $this;
-    }
-
-    public function removeSalesFile(SalesFile $salesFile): self
-    {
-        $this->salesFiles->removeElement($salesFile);
 
         return $this;
     }
@@ -194,18 +162,20 @@ class DemandForecastFile
         $demandForecast->setFilename($demandForecastFileDtoRequest->filename);
         if ($demandForecastFileDtoRequest->object_analysis === 'category') {
             $demandForecast->setCategory($category);
+            $demandForecast->setSalesFile($file);
         } else {
-            $demandForecast->salesFiles->add($file);
+            $demandForecast->setSalesFile($file);
         }
         $demandForecast->setAnalysisMethod($demandForecastFileDtoRequest->method);
         $demandForecast->setAnalysisField($demandForecastFileDtoRequest->column);
         $demandForecast->setForecastPeriod($demandForecastFileDtoRequest->period);
+        $demandForecast->setInterval($demandForecastFileDtoRequest->freq);
         return $demandForecast;
     }
 
     public function getAccuracy(): ?float
     {
-        return $this->accuracy;
+        return round($this->accuracy, 2);
     }
 
     public function setAccuracy(?float $accuracy): self
@@ -235,6 +205,94 @@ class DemandForecastFile
     public function setForecastPeriod(int $forecastPeriod): self
     {
         $this->forecastPeriod = $forecastPeriod;
+
+        return $this;
+    }
+
+    public function getAnalysisMethodFormatNumber(): ?int
+    {
+        return $this->analysisMethod;
+    }
+
+    public function getAnalysisMethodFormatString(): ?string
+    {
+        return self::METHODS_TYPES[$this->analysisMethod];
+    }
+
+    public function setAnalysisMethod(int $analysisMethod): self
+    {
+        $this->analysisMethod = $analysisMethod;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PurchasePlan[]
+     */
+    public function getPurchasePlans(): Collection
+    {
+        return $this->purchasePlans;
+    }
+
+    public function addPurchasePlan(PurchasePlan $purchasePlan): self
+    {
+        if (!$this->purchasePlans->contains($purchasePlan)) {
+            $this->purchasePlans[] = $purchasePlan;
+            $purchasePlan->setDemandForecastFile($this);
+        }
+
+        return $this;
+    }
+
+    public function removePurchasePlan(PurchasePlan $purchasePlan): self
+    {
+        if ($this->purchasePlans->removeElement($purchasePlan)) {
+            // set the owning side to null (unless already changed)
+            if ($purchasePlan->getDemandForecastFile() === $this) {
+                $purchasePlan->setDemandForecastFile(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRmse(): ?float
+    {
+        return $this->rmse;
+    }
+
+    public function setRmse(float $rmse): self
+    {
+        $this->rmse = $rmse;
+
+        return $this;
+    }
+
+    public function getInterval(): ?string
+    {
+        return $this->interval;
+    }
+
+    public function setInterval(string $interval): self
+    {
+        $this->interval = $interval;
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->filename;
+    }
+
+    public function getSalesFile(): ?SalesFile
+    {
+        return $this->salesFile;
+    }
+
+    public function setSalesFile(?SalesFile $salesFile): self
+    {
+        $this->salesFile = $salesFile;
 
         return $this;
     }

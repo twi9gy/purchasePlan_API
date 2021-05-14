@@ -33,17 +33,4 @@ class CategoryDto
      * @Assert\Length (min="3")
      */
     public $name;
-
-    /**
-     *
-     * @OA\Property(
-     *     format="integer",
-     *     title="parent_id",
-     *     description="Номер родительской категории",
-     *     example="null"
-     * )
-     *
-     * @Serialization\Type("integer")
-     */
-    public $parent_id;
 }

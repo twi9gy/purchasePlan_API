@@ -44,4 +44,16 @@ class SalesFileDto
      * @Assert\Length (min="3")
      */
     public $filename;
+
+    /**
+     *
+     * @OA\Property(
+     *     format="string",
+     *     title="Separator",
+     *     description="Разделитель csv файла"
+     * )
+     *
+     * @Serialization\Type("string")
+     */
+    public $separator;
 }

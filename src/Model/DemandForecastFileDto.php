@@ -111,18 +111,6 @@ class DemandForecastFileDto
     /**
      *
      * @OA\Property(
-     *     format="string",
-     *     title="freq",
-     *     description="Разделитель стобцов для csv файлов."
-     * )
-     *
-     * @Serialization\Type("string")
-     */
-    public $delimiter;
-
-    /**
-     *
-     * @OA\Property(
      *     format="integer",
      *     title="period",
      *     description="Период прогнозирования спроса"

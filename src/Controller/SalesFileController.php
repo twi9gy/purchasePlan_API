@@ -95,21 +95,12 @@ class SalesFileController extends AbstractController
                 $category = $categoryRepository->find($category_id);
                 if ($category) {
                     // Получаем все файлы категории
-                    $files = $salesFileRepository->findBy(['category' => $category_id]);
-
-                    // Формируем массив категорий
-                    $result = [];
-                    foreach ($files as $file) {
-                        $result[] = [
-                            'id' => $file->getId(),
-                            'filename' => $file->getFilename(),
-                        ];
-                    }
+                    $files = $salesFileRepository->findByCategory($user->getId(), $category_id);
 
                     // Формируем ответ сервера
                     $data = [
                         "code" => Response::HTTP_OK,
-                        "files" => $result
+                        "files" => $files
                     ];
                     $response->setStatusCode(Response::HTTP_OK);
                 } else {
@@ -122,21 +113,12 @@ class SalesFileController extends AbstractController
                 }
             } else {
                 // Получаем все файлы категории
-                $files = $salesFileRepository->findBy(['purchase_user' => $user->getId()]);
-
-                // Формируем массив категорий
-                $result = [];
-                foreach ($files as $file) {
-                    $result[] = [
-                        'id' => $file->getId(),
-                        'filename' => $file->getFilename(),
-                    ];
-                }
+                $files = $salesFileRepository->findByUser($user->getId());
 
                 // Формируем ответ сервера
                 $data = [
                     "code" => Response::HTTP_OK,
-                    "files" => $result
+                    "files" => $files
                 ];
                 $response->setStatusCode(Response::HTTP_OK);
             }
@@ -207,6 +189,22 @@ class SalesFileController extends AbstractController
      *          response="400",
      *          description="Внутренняя ошибка.",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
      *     )
      * )
      *
@@ -226,6 +224,7 @@ class SalesFileController extends AbstractController
         $fileDto = new SalesFileDto();
         $fileDto->filename = $_POST['filename'];
         $fileDto->category_id = $_POST['category_id'];
+        $fileDto->separator = $_POST['separator'];
         // Проверка ошибок валидации
         $errors = $validator->validate($fileDto);
 
@@ -242,12 +241,13 @@ class SalesFileController extends AbstractController
             if ($uploadResult['code'] === Response::HTTP_OK) {
                 // Создание объекта класса Category из Dto
                 $file = SalesFile::fromDto($fileDto, $categoryRepository);
-                $file->setCreatedAt(new \DateTime());
-                $file->setEditAt($file->getCreatedAt());
+                
                 // Получаем пользователя
                 $user = $userRepository->findOneBy(['email' => $this->getUser()->getUsername()]);
                 // Устанавливаем файлу пользователя
                 $file->setPurchaseUser($user);
+                $file->setCreatedAt(new \DateTime());
+                $file->setCreatedByCategory(false);
 
                 // Сохраняем файл
                 $entityManager = $this->getDoctrine()->getManager();
@@ -302,6 +302,22 @@ class SalesFileController extends AbstractController
      *          response="400",
      *          description="Внутренняя ошибка.",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
      *     )
      * )
      *
@@ -347,6 +363,22 @@ class SalesFileController extends AbstractController
      *          response="400",
      *          description="Внутренняя ошибка.",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
      *     )
      * )
      *
@@ -426,6 +458,22 @@ class SalesFileController extends AbstractController
      *          response="400",
      *          description="Внутренняя ошибка.",
      *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неавторизованынй пользователь.",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="code",
+     *                  type="string",
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="JWT Token not found"
+     *              )
+     *          )
      *     )
      * )
      *

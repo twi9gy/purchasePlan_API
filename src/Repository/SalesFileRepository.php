@@ -19,6 +19,32 @@ class SalesFileRepository extends ServiceEntityRepository
         parent::__construct($registry, SalesFile::class);
     }
 
+    public function findByCategory($user, $category): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.id, s.filename, s.separator')
+            ->andWhere('s.purchase_user = :user')
+            ->andWhere('s.category = :category')
+            ->setParameter('user', $user)
+            ->setParameter('category', $category)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult()
+            ;
+    }
+
+    public function findByUser($user): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.id, s.filename, s.separator')
+            ->andWhere('s.purchase_user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult()
+            ;
+    }
+
     // /**
     //  * @return SalesFile[] Returns an array of SalesFile objects
     //  */

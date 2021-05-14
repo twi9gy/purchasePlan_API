@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\Exception\DemandForecastServiceException;
 use App\Model\DemandForecastFileDto;
+use App\Entity\SalesFile;
 
 class DemandForecastService
 {
@@ -23,12 +24,15 @@ class DemandForecastService
     }
 
     /**
+     * @param DemandForecastFileDto $request
+     * @param SalesFile $file
+     * @return mixed
      * @throws DemandForecastServiceException
      */
-    public function getHoldWinterPredictionFromFile(DemandForecastFileDto $request): void
+    public function getHoldWinterPredictionFromFile(DemandForecastFileDto $request, SalesFile $file)
     {
         // Формируем данные для анализа
-        $cFile = curl_file_create($this->pathToFile . '/' . $request->file);
+        $cFile = curl_file_create($this->pathToFile . '/' . $file->getFilename());
         $postData = array('file'=> $cFile);
 
         // Формируем запрос в сервис
@@ -39,12 +43,11 @@ class DemandForecastService
         if ($request->column !== "") {
             $this->addProperty("column", $request->column);
         }
-        if ($request->delimiter !== "") {
-            $this->addProperty("delimiter", $request->delimiter);
-        }
         if ($request->period !== "") {
             $this->addProperty("period", $request->period);
         }
+
+        $this->addProperty("delimiter", $file->getSeparator());
 
         // Создаем запрос в сервис
         $ch = curl_init($this->uri);
@@ -63,7 +66,7 @@ class DemandForecastService
 
         $result = json_decode($responseData, true);
         if (isset($result['code']) && $result['code'] === 403) {
-            throw new DemandForecastServiceException($result['message']);
+            throw new DemandForecastServiceException($result['message'], 403);
         }
 
         if (!is_dir($this->pathToSave)
@@ -77,15 +80,20 @@ class DemandForecastService
             $this->pathToSave . '/' . $request->filename . '.json',
             $responseData
         );
+
+        return $result;
     }
 
     /**
-     * @throws \App\Exception\DemandForecastServiceException
+     * @param DemandForecastFileDto $request
+     * @param SalesFile $file
+     * @return mixed
+     * @throws DemandForecastServiceException
      */
-    public function getARIMAPredictionFromFile(DemandForecastFileDto $request): void
+    public function getARIMAPredictionFromFile(DemandForecastFileDto $request, SalesFile $file)
     {
         // Формируем данные для анализа
-        $cFile = curl_file_create($this->pathToFile . '/' . $request->file);
+        $cFile = curl_file_create($this->pathToFile . '/' . $file->getFilename());
         $postData = array('file'=> $cFile);
 
         // Формируем запрос в сервис
@@ -97,15 +105,14 @@ class DemandForecastService
         if ($request->column !== "") {
             $this->addProperty("column", $request->column);
         }
-        if ($request->delimiter !== "") {
-            $this->addProperty("delimiter", $request->delimiter);
-        }
         if ($request->period !== "") {
             $this->addProperty("period", $request->period);
         }
         if ($request->seasonal !== "") {
             $this->addProperty("seasonal", $request->period);
         }
+
+        $this->addProperty("delimiter", $file->getSeparator());
 
         // Создаем запрос в сервис
         $ch = curl_init($this->uri);
@@ -124,7 +131,7 @@ class DemandForecastService
 
         $result = json_decode($responseData, true);
         if (isset($result['code']) && $result['code'] === 403) {
-            throw new DemandForecastServiceException($result['message']);
+            throw new DemandForecastServiceException($result['message'], 403);
         }
 
         if (!is_dir($this->pathToSave)
@@ -138,6 +145,8 @@ class DemandForecastService
             $this->pathToSave . '/' . $request->filename . '.json',
             $responseData
         );
+
+        return $result;
     }
 
     private function addProperty($property, $param): void

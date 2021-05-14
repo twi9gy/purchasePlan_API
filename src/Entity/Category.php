@@ -32,18 +32,12 @@ class Category
     private $purchase_user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class)
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $parent;
-
-    /**
      * @ORM\OneToMany(targetEntity=SalesFile::class, mappedBy="category", cascade={"remove"})
      */
     private $salesFiles;
 
     /**
-     * @ORM\OneToMany(targetEntity=DemandForecastFile::class, mappedBy="category")
+     * @ORM\OneToMany(targetEntity=DemandForecastFile::class, mappedBy="category", cascade={"remove"})
      */
     private $demandForecastFiles;
 
@@ -82,22 +76,9 @@ class Category
         return $this;
     }
 
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
-
-    public function setParent(?self $parent): self
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
     public static function fromDto(CategoryDto $categoryDto): self
     {
         $category = new self();
-        $category->setParent($categoryDto->parent_id);
         $category->setName($categoryDto->name);
         return $category;
     }
@@ -157,5 +138,10 @@ class Category
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

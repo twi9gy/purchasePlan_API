@@ -19,6 +19,18 @@ class PurchasePlanRepository extends ServiceEntityRepository
         parent::__construct($registry, PurchasePlan::class);
     }
 
+    public function findByUser($user): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d.id, d.filename')
+            ->andWhere('d.purchase_user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('d.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult()
+            ;
+    }
+
     // /**
     //  * @return PurchasePlan[] Returns an array of PurchasePlan objects
     //  */
