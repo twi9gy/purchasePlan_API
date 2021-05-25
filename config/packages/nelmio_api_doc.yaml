@@ -15,7 +15,10 @@ nelmio_api_doc:
     models:
         names:
             - { alias: UserDto, type: App\Model\UserDto }
-            - { alias: FailResponse, type: App\Model\FailResponse }
+            - { alias: BadRequest, type: App\Model\ErrorRequest\BadRequest }
+            - { alias: ConflictRequest, type: App\Model\ErrorRequest\ConflictRequest }
+            - { alias: UnauthorizedRequest, type: App\Model\ErrorRequest\UnauthorizedRequest }
+            - { alias: InternalError, type: App\Model\ErrorRequest\InternalError }
             - { alias: CategoryDto, type: App\Model\CategoryDto }
             - { alias: SalesFileDto, type: App\Model\SalesFileDto }
             - { alias: DemandForecastDto, type: App\Model\DemandForecastFileDto }

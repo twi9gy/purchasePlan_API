@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Model;
+namespace App\Model\ErrorRequest;
 
 use JMS\Serializer\Annotation as Serialization;
 use OpenApi\Annotations as OA;
@@ -9,20 +9,21 @@ use OpenApi\Annotations as OA;
 /**
  *
  *  @OA\Schema(
- *     title="FailResponse",
- *     description="Ответ сервера при ошибке"
+ *     title="Bad Request",
+ *     description="Некорректный запрос"
  * )
  *
- * Class FailResponse
- * @package App\Model
+ * Class BadRequest
+ * @package App\Model\ErrorRequest
  */
-class FailResponse
+class BadRequest
 {
     /**
      * @OA\Property(
-     *     format="integer",
+     *     format="intaeger",
      *     title="code",
-     *     description="Код ошибки"
+     *     description="Код ошибки",
+     *     example="400"
      * )
      *
      * @Serialization\Type("integer")
@@ -33,7 +34,8 @@ class FailResponse
      * @OA\Property(
      *     format="string",
      *     title="message",
-     *     description="Сообщение ошибки"
+     *     description="Сообщение ошибки",
+     *     example="Сообщение ошибки"
      * )
      * @Serialization\Type("string")
      */

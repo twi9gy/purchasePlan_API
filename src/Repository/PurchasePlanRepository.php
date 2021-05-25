@@ -21,11 +21,16 @@ class PurchasePlanRepository extends ServiceEntityRepository
 
     public function findByUser($user): array
     {
-        return $this->createQueryBuilder('d')
-            ->select('d.id, d.filename')
-            ->andWhere('d.purchase_user = :user')
+        return $this->createQueryBuilder('p')
+            ->select('p.id,
+                p.filename,
+                p.orderPoint,
+                p.reserve,
+                p.sizeOrder,
+                p.createdAt')
+            ->andWhere('p.purchase_user = :user')
             ->setParameter('user', $user)
-            ->orderBy('d.id', 'ASC')
+            ->orderBy('p.id', 'ASC')
             ->getQuery()
             ->getArrayResult()
             ;

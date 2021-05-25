@@ -34,10 +34,47 @@ class DemandForecastFileRepository extends ServiceEntityRepository
     public function findByUser($user): array
     {
         return $this->createQueryBuilder('d')
-            ->select('d.id, d.filename')
+            ->select('d.id, 
+                d.filename,
+                d.accuracy,
+                d.rmse,
+                d.forecastPeriod as forecast_period,
+                d.interval,
+                d.createdAt 
+            ')
             ->andWhere('d.purchase_user = :user')
             ->setParameter('user', $user)
             ->orderBy('d.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult()
+            ;
+    }
+
+    public function findDemandForecastFileByID(DemandForecastFile $file)
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d.id,
+                d.filename as filename,
+                d.analysisField as column,
+                d.rmse,
+                s.filename as sale_file_filename,
+                c.name as category_name')
+            ->leftJoin('d.salesFile', 's')
+            ->leftJoin('d.category', 'c')
+            ->andWhere('d.id = :id')
+            ->setParameter('id', $file->getId())
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
+    public function findPlanByDemandForecastFile(DemandForecastFile $file)
+    {
+        return $this->createQueryBuilder('d')
+            ->select('p.id as plan_id, p.filename as plan_filename')
+            ->innerJoin('d.purchasePlans', 'p')
+            ->andWhere('d.id = :id')
+            ->setParameter('id', $file->getId())
             ->getQuery()
             ->getArrayResult()
             ;

@@ -28,7 +28,7 @@ class UserFixtures extends Fixture
         $user->setEmail('test@gmail.com');
         $user->setPassword($this->passwordEncoder->encodePassword(
             $user,
-            'test'
+            'test_user'
         ));
         $user->setRoles(["ROLE_USER"]);
         $user->setCompanyName('user_company');

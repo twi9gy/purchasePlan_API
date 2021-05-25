@@ -36,7 +36,12 @@ class DemandForecastFileController extends AbstractController
      *          description="Успешная операция",
      *          @OA\JsonContent(
      *              @OA\Property(
-     *                  property="demandForecastFiles",
+     *                  property="code",
+     *                  type="integer",
+     *                  example="200"
+     *              ),
+     *              @OA\Property(
+     *                  property="files",
      *                  type="array",
      *                  @OA\Items(
      *                      @OA\Property(
@@ -54,18 +59,7 @@ class DemandForecastFileController extends AbstractController
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -138,28 +132,17 @@ class DemandForecastFileController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     ),
      *     @OA\Response(
      *          response="409",
-     *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          description="Крнфликт",
+     *          @OA\JsonContent(ref="#/components/schemas/ConflictRequest")
      *     )
      * )
      *
@@ -344,23 +327,12 @@ class DemandForecastFileController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -387,19 +359,26 @@ class DemandForecastFileController extends AbstractController
             $content = file_get_contents($file);
             $json = json_decode($content, true);
 
+            $data = $demandForecastFileRepository->findDemandForecastFileByID($demandForecastFile);
+            $plans = $demandForecastFileRepository->findPlanByDemandForecastFile($demandForecastFile);
+
+
             // Формируем ответ
             $data = [
-                'filename' => $demandForecastFile->getFilename(),
+                'filename' => $data['filename'],
                 'start_period_analysis' => (new \DateTime($json['start_period_analysis']))->format('d.m.Y'),
                 'end_period_analysis' => (new \DateTime($json['end_period_analysis']))->format('d.m.Y'),
-                'column' => $demandForecastFile->getAnalysisField(),
+                'column' => $data['column'],
                 'start_period_forecast' => (new \DateTime($json['start_period_forecast']))->format('d.m.Y'),
                 'end_period_forecast' => (new \DateTime($json['end_period_forecast']))->format('d.m.Y'),
                 'method' => $demandForecastFile->getAnalysisMethodFormatString(),
-                'accuracy' => round($demandForecastFile->getRmse(), 2),
+                'accuracy' => round($data['rmse'], 2),
                 'prediction' => $json['prediction'],
                 'origin_data' => $json['origin_data'],
-                'percentage_accuracy' => $json['percentage_accuracy']
+                'percentage_accuracy' => $json['percentage_accuracy'],
+                'sales_file' => $data['sale_file_filename'],
+                'category' => $data['category_name'],
+                'purchase_plans' => $plans
             ];
             $response->setStatusCode(Response::HTTP_OK);
         } else {
@@ -441,23 +420,12 @@ class DemandForecastFileController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *

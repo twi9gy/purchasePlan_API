@@ -13,8 +13,8 @@ fastcgi_send_timeout 300;
 fastcgi_read_timeout 300;
 
 location / {
-    # try to serve file directly, fallback to index.php
-    try_files $uri /index.php$is_args$args;
+  # try to serve file directly, fallback to index.php
+  try_files $uri /index.php$is_args$args;
 }
 
 location ~ ^/index\.php(/|$) {
@@ -41,21 +41,6 @@ location ~ ^/index\.php(/|$) {
     # http://domain.tld/index.php/some-path
     # Remove the internal directive to allow URIs like this
     internal;
-
-    if ($request_method = 'OPTIONS') {
-                add_header 'Access-Control-Allow-Origin' "$http_origin" always;
-                add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, DELETE, PATCH, PUT' always;
-                add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
-                add_header 'Access-Control-Max-Age' 1728000;
-                add_header 'Content-Type' 'text/plain; charset=utf-8';
-                add_header 'Content-Length' 0;
-                return 204;
-    }
-    if ($request_method ~* "(GET|POST|PUT|PATCH|DELETE)") {
-        add_header 'Access-Control-Allow-Origin' "$http_origin" always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, DELETE, OPTIONS, PATCH, PUT' always;
-        add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept" always;
-    }
 }
 
 # return 404 for all other php files not matching the front controller

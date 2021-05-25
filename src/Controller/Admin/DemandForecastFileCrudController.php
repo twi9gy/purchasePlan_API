@@ -24,17 +24,17 @@ class DemandForecastFileCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id'),
-            TextField::new('filename'),
-            DateTimeField::new('createdAt'),
-            AssociationField::new('salesFile'),
-            AssociationField::new('category'),
-            PercentField::new('accuracy'),
-            TextField::new('analysisField'),
-            TextField::new('AnalysisMethodFormatString'),
-            NumberField::new('forecastPeriod'),
-            AssociationField::new('purchasePlans'),
+            TextField::new('filename', 'Название файла'),
+            DateTimeField::new('createdAt', 'Дата создания'),
+            AssociationField::new('salesFile', 'Файл продаж'),
+            AssociationField::new('category', 'Категория'),
+            PercentField::new('accuracy', 'Точность прогноза'),
             NumberField::new('rmse'),
-            TextField::new('interval')
+            TextField::new('analysisField', 'Поле анализа'),
+            TextField::new('AnalysisMethodFormatString', 'Метод анализа'),
+            NumberField::new('forecastPeriod', 'Период прогнозирования'),
+            TextField::new('interval', 'Интервал прогнозирования'),
+            AssociationField::new('purchasePlans', 'Планы закупок'),
         ];
     }
 }

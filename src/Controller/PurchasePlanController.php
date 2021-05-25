@@ -53,18 +53,7 @@ class PurchasePlanController extends AbstractController
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -128,28 +117,17 @@ class PurchasePlanController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     ),
      *     @OA\Response(
      *          response="409",
-     *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          description="Конфликт.",
+     *          @OA\JsonContent(ref="#/components/schemas/ConflictRequest")
      *     )
      * )
      *
@@ -218,7 +196,7 @@ class PurchasePlanController extends AbstractController
 
                     $data = [
                         'code' => Response::HTTP_CREATED,
-                        'message' => 'План закупок был создан '
+                        'message' => 'План закупок был создан'
                     ];
                     $response->setStatusCode(Response::HTTP_CREATED);
                 } catch (PlanningPurchaseServiceException $e) {
@@ -299,28 +277,17 @@ class PurchasePlanController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
      * @Route("/{id}", name="purchase_plan_show", methods={"GET"})
-     * @param 
+     * @param PurchasePlan $plan
      * @param SerializerInterface $serializer
      * @return Response
      * @throws \Exception
@@ -363,7 +330,9 @@ class PurchasePlanController extends AbstractController
                 'orders' => $planJson['orders'],
                 'demand' => $demandFileJson['prediction'],
                 'product_count' => $planJson['product_count'],
-                'orders_origin' => $planJson['orders_origin']
+                'orders_origin' => $planJson['orders_origin'],
+                'demand_forecast_id' => $plan->getDemandForecastFile()->getId(),
+                'demand_forecast_filename' => $plan->getDemandForecastFile()->getFilename()
             ];
 
             $response->setStatusCode(Response::HTTP_OK);
@@ -406,23 +375,12 @@ class PurchasePlanController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -438,7 +396,7 @@ class PurchasePlanController extends AbstractController
 
         // Удаляем файл из файловой системы
         $basePath = $this->getParameter('kernel.project_dir')
-            . '/public/uploads/Plans/' . $userJWT->getUsername();
+            . '/public/uploads/plans/' . $userJWT->getUsername();
 
         if (is_file($basePath . '/' . $plan->getFilename() . '.json')) {
             unlink($basePath . '/' . $plan->getFilename() . '.json');

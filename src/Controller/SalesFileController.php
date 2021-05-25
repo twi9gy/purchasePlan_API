@@ -50,23 +50,12 @@ class SalesFileController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -188,23 +177,12 @@ class SalesFileController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -273,67 +251,6 @@ class SalesFileController extends AbstractController
 
     /**
      *
-     * @OA\Get(
-     *     path="/api/v1/sales_file/{id}",
-     *     tags={"sales file"},
-     *     summary="Получение файла продаж пользователя.",
-     *     description="Данный метод доступен только авторизованным пользователям.",
-     *     operationId="categories.getSaleFileById",
-     *     @OA\Response(
-     *          response="200",
-     *          description="Успешная операция",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="integer",
-     *                  example="200"
-     *              ),
-     *              @OA\Property(
-     *                  property="id",
-     *                  type="integer"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *     ),
-     *     @OA\Response(
-     *          response="400",
-     *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
-     *     ),
-     *     @OA\Response(
-     *          response="401",
-     *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
-     *     )
-     * )
-     *
-     * @Route("/{id}", name="sales_file_show", methods={"GET"})
-     * @param SalesFile $salesFile
-     * @return Response
-     */
-    public function show(SalesFile $salesFile): Response
-    {
-        return $this->render('sales_file/show.html.twig', [
-            'sales_file' => $salesFile,
-        ]);
-    }
-
-    /**
-     *
      * @OA\Post(
      *     path="/api/v1/sales_file/{id}/edit",
      *     tags={"sales file"},
@@ -362,23 +279,12 @@ class SalesFileController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -411,7 +317,6 @@ class SalesFileController extends AbstractController
             $response->setStatusCode(Response::HTTP_BAD_REQUEST);
         } else {
             $salesFile->setFilename($fileDto->filename);
-            $salesFile->setEditAt(new \DateTime());
 
             // Сохраняем файл
             $entityManager = $this->getDoctrine()->getManager();
@@ -457,23 +362,12 @@ class SalesFileController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *

@@ -31,6 +31,11 @@ class CategoryController extends AbstractController
      *          description="Успешная операция",
      *          @OA\JsonContent(
      *              @OA\Property(
+     *                  property="code",
+     *                  type="integer",
+     *                  example="200"
+     *              ),
+     *              @OA\Property(
      *                  property="categories",
      *                  type="array",
      *                  @OA\Items(
@@ -49,18 +54,7 @@ class CategoryController extends AbstractController
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -138,23 +132,12 @@ class CategoryController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     ),
      * )
      *
@@ -254,23 +237,12 @@ class CategoryController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -337,10 +309,6 @@ class CategoryController extends AbstractController
      *                  example="200"
      *              ),
      *              @OA\Property(
-     *                  property="id",
-     *                  type="integer"
-     *              ),
-     *              @OA\Property(
      *                  property="message",
      *                  type="string"
      *              )
@@ -349,23 +317,12 @@ class CategoryController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
@@ -441,23 +398,12 @@ class CategoryController extends AbstractController
      *     @OA\Response(
      *          response="400",
      *          description="Внутренняя ошибка.",
-     *          @OA\JsonContent(ref="#/components/schemas/FailResponse")
+     *          @OA\JsonContent(ref="#/components/schemas/BadRequest")
      *     ),
      *     @OA\Response(
      *          response="401",
      *          description="Неавторизованынй пользователь.",
-     *          @OA\JsonContent(
-     *              @OA\Property(
-     *                  property="code",
-     *                  type="string",
-     *                  example="401"
-     *              ),
-     *              @OA\Property(
-     *                  property="message",
-     *                  type="string",
-     *                  example="JWT Token not found"
-     *              )
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/UnauthorizedRequest")
      *     )
      * )
      *
