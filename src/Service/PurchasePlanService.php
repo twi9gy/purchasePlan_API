@@ -31,7 +31,7 @@ class PurchasePlanService
         $cFile = curl_file_create($this->pathToFile . '/' . $request->forecast_file . '.json');
         $postData = array('file'=> $cFile);
 
-        $uri = $this->baseUri . 'purchase_plan/create' .
+        $uri = $this->baseUri . 'wilson/create' .
             '?freq_interval=' . $file->getInterval() . '&service_level=' . $request->service_level .
             '&storage_costs=' . $request->storage_cost . '&product_price=' . $request->product_price .
             '&shipping_costs=' . $request->shipping_costs . '&time_shipping=' . $request->time_shipping;
