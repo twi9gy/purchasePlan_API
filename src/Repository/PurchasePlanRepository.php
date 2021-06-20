@@ -26,7 +26,7 @@ class PurchasePlanRepository extends ServiceEntityRepository
                 p.filename,
                 p.orderPoint,
                 p.reserve,
-                p.sizeOrder,
+                p.totalCost,
                 p.createdAt')
             ->andWhere('p.purchase_user = :user')
             ->setParameter('user', $user)
