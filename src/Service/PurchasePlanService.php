@@ -34,7 +34,8 @@ class PurchasePlanService
         $uri = $this->baseUri . 'wilson/create' .
             '?freq_interval=' . $file->getInterval() . '&service_level=' . $request->service_level .
             '&storage_costs=' . $request->storage_cost . '&product_price=' . $request->product_price .
-            '&shipping_costs=' . $request->shipping_costs . '&time_shipping=' . $request->time_shipping;
+            '&shipping_costs=' . $request->shipping_costs . '&time_shipping=' . $request->time_shipping .
+            '&production_quantity=' . $request->production_quantity;
 
         if ($request->delayed_deliveries !== null) {
             $uri .= '&delayed_deliveries=' . $request->delayed_deliveries;

@@ -120,4 +120,14 @@ class PurchasePlanDto
      * @Serialization\Type("integer")
      */
     public $delayed_deliveries;
+
+    /**
+     *  @OA\Property(
+     *     format="integer",
+     *     title="production_quantity",
+     *     description="Текущий уровень запасов."
+     * )
+     * @Serialization\Type("integer")
+     */
+    public $production_quantity;
 }
