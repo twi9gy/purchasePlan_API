@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210513164424 extends AbstractMigration
+final class Version20210526092553 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -39,7 +39,7 @@ final class Version20210513164424 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_1D09E870E7927C74 ON purchase_plan_user (email)');
         $this->addSql('CREATE TABLE refresh_tokens (id INT NOT NULL, refresh_token VARCHAR(128) NOT NULL, username VARCHAR(255) NOT NULL, valid TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_9BACE7E1C74F2195 ON refresh_tokens (refresh_token)');
-        $this->addSql('CREATE TABLE sales_file (id INT NOT NULL, category_id INT NOT NULL, purchase_user_id INT NOT NULL, filename VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, separator VARCHAR(10) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE sales_file (id INT NOT NULL, category_id INT NOT NULL, purchase_user_id INT NOT NULL, filename VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, separator VARCHAR(10) DEFAULT NULL, created_by_category BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_7108DBC512469DE2 ON sales_file (category_id)');
         $this->addSql('CREATE INDEX IDX_7108DBC5BCB419EC ON sales_file (purchase_user_id)');
         $this->addSql('ALTER TABLE category ADD CONSTRAINT FK_64C19C1BCB419EC FOREIGN KEY (purchase_user_id) REFERENCES purchase_plan_user (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
